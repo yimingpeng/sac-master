@@ -74,12 +74,12 @@ ls -la
 echo ==SETUP BASH==
 bash
 export PATH=/vol/grid-solar/sgeusers/yimingpeng/miniconda3/bin/:$PATH
-source activate cmaes_baselines
+source activate sac
 
 #Define path
-experimentFolder="cmaes_baselines"
-experimentName="baselines"
-pyName="run_pybullet.py"
+experimentFolder="sac-master"
+experimentName="examples"
+pyName="pybullet_test_sac.py"
 
 #
 # Copy the input file to the local directory
