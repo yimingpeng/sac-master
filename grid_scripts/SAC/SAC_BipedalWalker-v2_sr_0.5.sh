@@ -6,7 +6,7 @@
 #
 # I know I have a directory here so I'll use it as my initial working directory
 #
-#$ -wd /vol/grid-solar/sgeusers/yimingpeng
+#$ -wd /vol/grid-solar/sgeusers/achen
 #
 
 #
@@ -17,16 +17,16 @@
 #
 # Check we have somewhere to work now and if we don't, exit nicely.
 #
-if [ -d /local/tmp/yimingpeng/$JOB_ID.$SGE_TASK_ID ]; then
-        cd /local/tmp/yimingpeng/$JOB_ID.$SGE_TASK_ID
+if [ -d /local/tmp/achen/$JOB_ID.$SGE_TASK_ID ]; then
+        cd /local/tmp/achen/$JOB_ID.$SGE_TASK_ID
 else
         echo "Uh oh ! There's no job directory to change into "
         echo "Something is broken. I should inform the programmers"
         echo "Save some information that may be of use to them"
         echo "Here's LOCAL TMP "
         ls -la /local/tmp
-        echo "AND LOCAL TMP yimingpeng "
-        ls -la /local/tmp/yimingpeng
+        echo "AND LOCAL TMP achen "
+        ls -la /local/tmp/achen
         echo "Exiting"
         exit 1
 fi
@@ -65,7 +65,7 @@ set
 echo == WHATS IN LOCAL/TMP ON THE MACHINE WE ARE RUNNING ON ==
 ls -ltra /local/tmp | tail
 #
-echo == WHATS IN LOCAL TMP yimingpeng JOB_ID AT THE START==
+echo == WHATS IN LOCAL TMP achen JOB_ID AT THE START==
 ls -la
 
 #c
@@ -73,7 +73,7 @@ ls -la
 #
 echo ==SETUP BASH==
 bash
-export PATH=/vol/grid-solar/sgeusers/yimingpeng/miniconda3/bin/:$PATH
+export PATH=/vol/grid-solar/sgeusers/achen/miniconda3/bin/:$PATH
 source activate sac
 
 #Define path
@@ -84,13 +84,14 @@ pyName="pybullet_test_sac.py"
 #
 # Copy the input file to the local directory
 #
-cp -r /vol/grid-solar/sgeusers/yimingpeng/$experimentFolder .
+cp -r /vol/grid-solar/sgeusers/achen/$experimentFolder .
 
 #
 # cd into repo
 #
 echo ==GOING INTO EXPERIMENT DIRECTORY==
 cd $experimentFolder/$experimentName/
+
 #
 # Run experiment
 #
@@ -105,8 +106,8 @@ ls -la
 #  (really should check that directory exists too, but this is just a test)
 #
 echo ==COPY PROGRAM RUN FILES==
-mkdir -p /vol/grid-solar/sgeusers/yimingpeng/$experimentFolder/$JOB_ID.$SGE_TASK_ID
-cp -r ./logs /vol/grid-solar/sgeusers/yimingpeng/$experimentFolder/$JOB_ID.$SGE_TASK_ID
+mkdir -p /vol/grid-solar/sgeusers/achen/$experimentFolder/$JOB_ID.$SGE_TASK_ID
+cp -r ./logs /vol/grid-solar/sgeusers/achen/$experimentFolder/$JOB_ID.$SGE_TASK_ID
 
 #
 echo "Ran through OK"
