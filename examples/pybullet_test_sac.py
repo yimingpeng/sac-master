@@ -12,7 +12,7 @@ os.sys.path.insert(0, parentdir)
 
 from sac.algos.sacv1 import SACV1
 from sac.envs.gym_env import GymEnv
-from sac.policies import GaussianPolicy, GMMPolicy
+from sac.policies import GaussianPolicy
 from sac.replay_buffers.simple_replay_buffer import SimpleReplayBuffer
 from sac.misc.sampler import SimpleSampler
 from sac.value_functions import NNQFunction
