@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # the repository
-cd /vol/grid-solar/sgeusers/yimingpeng/cmaes_baselines/grid_scripts/SAC/
+cd /vol/grid-solar/sgeusers/yimingpeng/sac-master/grid_scripts/SAC/
 
 # setting the grid env
 need sgegrid
@@ -39,6 +39,11 @@ qsub -t 1-3:1 SAC_HalfCheetahBulletEnv-v0_sr_3.0.sh
 qsub -t 1-3:1 SAC_HumanoidBulletEnv-v0_sr_1.0.sh
 qsub -t 1-3:1 SAC_Walker2DBulletEnv-v0_sr_1.0.sh
 qsub -t 1-3:1 SAC_AntBulletEnv-v0_sr_3.0.sh
+
+
+
+
+
 
 
 

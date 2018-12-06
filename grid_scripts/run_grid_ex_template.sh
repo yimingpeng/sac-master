@@ -1,13 +1,18 @@
 #! /bin/bash
 
 # the repository
-cd /vol/grid-solar/sgeusers/yimingpeng/cmaes_baselines/grid_scripts/ACKTR/
+cd /vol/grid-solar/sgeusers/yimingpeng/sac-master/grid_scripts/ACKTR/
 
 # setting the grid env
 need sgegrid
 
 
 # scripts starts here
+
+
+
+
+
 
 
 

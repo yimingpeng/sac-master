@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # the repository
-cd /vol/grid-solar/sgeusers/yimingpeng/cmaes_baselines/grid_scripts/RAC/
+cd /vol/grid-solar/sgeusers/yimingpeng/sac-master/grid_scripts/RAC/
 
 # setting the grid env
 need sgegrid
@@ -129,6 +129,11 @@ qsub -t 1-3:1 RAC_AntBulletEnv-v0_sr_3.0_rQ_2.0.sh
 qsub -t 1-3:1 RAC_ReacherBulletEnv-v0_sr_1.0_rQ_1.8.sh
 qsub -t 1-3:1 RAC_PusherBulletEnv-v0_sr_1.0_rQ_1.2.sh
 qsub -t 1-3:1 RAC_LunarLanderContinuous-v2_sr_3.0_rQ_1.2.sh
+
+
+
+
+
 
 
 
