@@ -91,9 +91,13 @@ if __name__ == '__main__':
             if "ACKTR" in line_f2:
                 line_f2 = line_f2.replace("ACKTR", algorithm)
             if "# scripts starts here" in line_f2:
+                import glob
+                all_files = glob.glob("../grid_scripts/" + str(algorithm) + "/*.sh")
                 line_f2 += "\n"
-                for script_name in script_names:
-                    line_f2 += "qsub -t 1-3:1 {}\n".format(script_name.split("/")[-1])
+                for file in all_files:
+                    if "run_grid" not in file.split("/")[-1]:
+                        line_f2 += "qsub -t 1-3:1 {}\n".format(file.split("/")[-1])
+            f3.write(line_f2)
         f3.close()
         f2.seek(0)
 
