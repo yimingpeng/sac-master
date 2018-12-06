@@ -32,29 +32,32 @@ tsallisQs = [1.2, 1.5, 1.8, 2.0]
 renyiQs = [1.2, 1.5, 1.8, 2.0]
 
 seeds = range(5)
+script_names = []
 
 
 # Generate for Bullet problems
 
 def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0):
+    directory = "../grid_scripts/" + str(algorithm)
     for problem in problems:
-        directory = "../grid_scripts/" + str(algorithm)
         if not os.path.exists(directory):
             os.makedirs(directory)
         script_name = ""
         if algorithm == "RAC":
-            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_rQ_" + str(renyiQ) + ".sh"
+            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_rQ_" + str(
+                renyiQ) + ".sh"
             f1 = open(script_name, 'w')
         elif algorithm == "TAC":
-            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_tQ_" + str(tasllisQ) + ".sh"
+            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_tQ_" + str(
+                tasllisQ) + ".sh"
             f1 = open(script_name, 'w')
         else:
-            scipt_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + ".sh"
-            f1 = open(scipt_name, 'w')
-
+            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + ".sh"
+            f1 = open(script_name, 'w')
+        script_names.append(script_name)
         for line in f:
             if 'pyName="pybullet_test_sac.py"' in line:
-                line  =line.replace("sac", algorithm.lower())
+                line = line.replace("sac", algorithm.lower())
             if "BipedalWalker-v2" in line:
                 if algorithm == "RAC":
                     line = "python $pyName --env {} " \
@@ -69,13 +72,6 @@ def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0):
             f1.write(line)
         f1.close()
         f.seek(0)
-        # f3 = open(directory + "/run_grid_ex_" + algorithm + ".sh", 'w')
-        # for line in f2:
-        #     if "ACKTR" in line:
-        #         line = line.replace("ACKTR", algorithm)
-        #     f3.write(line)
-        # f3.close()
-        # f2.seek(0)
 
 
 if __name__ == '__main__':
@@ -83,12 +79,25 @@ if __name__ == '__main__':
         for scale_reward in scale_rewards:
             if algorithm == "RAC":
                 for renyiQ in renyiQs:
-                    generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ=renyiQ)
+                    generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = renyiQ)
             elif algorithm == "TAC":
                 for tsallisQ in tsallisQs:
-                    generate_script(algorithm, scale_reward, tasllisQ=tsallisQ, renyiQ=2.0)
+                    generate_script(algorithm, scale_reward, tasllisQ = tsallisQ, renyiQ = 2.0)
             else:
                 generate_script(algorithm, scale_reward)
+
+        f3 = open("../grid_scripts/" + str(algorithm) + "/run_grid_ex_" + algorithm + ".sh", 'w')
+        for line_f2 in f2:
+            if "ACKTR" in line_f2:
+                line_f2 = line_f2.replace("ACKTR", algorithm)
+            if "# scripts starts here" in line_f2:
+                line_f2 += "\n"
+                for script_name in script_names:
+                    line_f2 += "qsub -t 1-5:1 {}\n".format(script_name.split("/")[-1])
+            print(line_f2)
+            f3.write(line_f2)
+        f3.close()
+        f2.seek(0)
 
 # Generate for gym control problems
 # for algorithm in algorithms:
