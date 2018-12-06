@@ -93,9 +93,7 @@ if __name__ == '__main__':
             if "# scripts starts here" in line_f2:
                 line_f2 += "\n"
                 for script_name in script_names:
-                    line_f2 += "qsub -t 1-5:1 {}\n".format(script_name.split("/")[-1])
-            print(line_f2)
-            f3.write(line_f2)
+                    line_f2 += "qsub -t 1-3:1 {}\n".format(script_name.split("/")[-1])
         f3.close()
         f2.seek(0)
 
