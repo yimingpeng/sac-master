@@ -123,7 +123,7 @@ def pybullet_arg_parser():
                         default = "InvertedPendulumSwingupBulletEnv-v0")
     parser.add_argument('--seed', help = 'RNG seed', type = int, default = 0)
     parser.add_argument('--scale-reward', type = float, default = 3.0)
-    parser.add_argument('--scale-entropy', type = float, default = 1.0)
+    parser.add_argument('--scale-entropy', type = float, default = 0.8)
     parser.add_argument('--tsallisQ', type = float, default = 2.0)
     return parser
 

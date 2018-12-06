@@ -15,82 +15,111 @@ __status__ = "Prototype"
 import os
 
 person = 'yimingpeng'
-#person = 'achen'
+# person = 'achen'
 
 if person == 'achen':
-    f = open("../../grid_scripts/aaron_template.sh")
-    f2 = open("../../grid_scripts/run_aaron_grid_ex_template.sh")
+    f = open("../grid_scripts/aaron_template.sh")
+    f2 = open("../grid_scripts/run_aaron_grid_ex_template.sh")
 else:
-    f = open("../../grid_scripts/template.sh")
-    f2 = open("../../grid_scripts/run_grid_ex_template.sh")
+    f = open("../grid_scripts/template.sh")
+    f2 = open("../grid_scripts/run_grid_ex_template.sh")
 algorithms = ["SAC", "EAC", "RAC", "TAC"]
-bullet_problems = ["HalfCheetah", "Hopper", "Walker2D", "Reacher", "Ant", "Humanoid", "Thrower", "Pusher"]
-gym_problems = ["LunarLanderContinuous", "BipedalWalker"]
+problems = ["HalfCheetahBulletEnv-v0", "HopperBulletEnv-v0", "Walker2DBulletEnv-v0", "ReacherBulletEnv-v0",
+            "AntBulletEnv-v0", "HumanoidBulletEnv-v0", "ThrowerBulletEnv-v0", "PusherBulletEnv-v0",
+            "LunarLanderContinuous-v2", "BipedalWalker-v2"]
 scale_rewards = [0.5, 1.0, 3.0]
+tsallisQs = [1.2, 1.5, 1.8, 2.0]
+renyiQs = [1.2, 1.5, 1.8, 2.0]
 
 seeds = range(5)
+
+
 # Generate for Bullet problems
-for algorithm in algorithms:
-    for problem in bullet_problems:
-        directory = "../../grid_scripts/" + str(algorithm)
+
+def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0):
+    for problem in problems:
+        directory = "../grid_scripts/" + str(algorithm)
         if not os.path.exists(directory):
             os.makedirs(directory)
-        f1 = open(directory + "/" + algorithm + "_" +
-                  problem + ".sh", 'w')
+        script_name = ""
+        if algorithm == "RAC":
+            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_rQ_" + str(renyiQ) + ".sh"
+            f1 = open(script_name, 'w')
+        elif algorithm == "TAC":
+            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_tQ_" + str(tasllisQ) + ".sh"
+            f1 = open(script_name, 'w')
+        else:
+            scipt_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + ".sh"
+            f1 = open(scipt_name, 'w')
+
         for line in f:
-            # if 'source activate cmaes_baselines' in line and algorithm == "DDPG":
-            #         line = line.replace("cmaes_baselines", "ddpg_baselines")
-            if 'pyName="run_pybullet.py"' in line:
-                if algorithm == "DDPG":
-                    line = line.replace("run_pybullet.py", "main.py")
-            if "$experimentFolder/$experimentName/ppo1/" in line:
-                line = "cd $experimentFolder/$experimentName/" + algorithm.lower() + "/\n"
+            if 'pyName="pybullet_test_sac.py"' in line:
+                line  =line.replace("sac", algorithm.lower())
             if "BipedalWalker-v2" in line:
-                if algorithm == "DDPG":
-                    line = "python $pyName --env-id " + problem + "BulletEnv-v0" + " --seed $SGE_TASK_ID\n"
+                if algorithm == "RAC":
+                    line = "python $pyName --env {} " \
+                           "--seed $SGE_TASK_ID --scale-reward {} --renyiQ {}\n".format(problem, scale_reward, renyiQ)
+                elif algorithm == "TAC":
+                    line = "python $pyName --env {} " \
+                           "--seed $SGE_TASK_ID --scale-reward {} --tsallisQ {}\n".format(problem, scale_reward,
+                                                                                          tasllisQ)
                 else:
-                    line = "python $pyName --env " + problem + "BulletEnv-v0" + " --seed $SGE_TASK_ID\n"
+                    line = "python $pyName --env {} " \
+                           "--seed $SGE_TASK_ID --scale-reward {}\n".format(problem, scale_reward)
             f1.write(line)
         f1.close()
         f.seek(0)
-    f3 = open(directory + "/run_grid_ex_" + algorithm + ".sh", 'w')
-    for line in f2:
-        if "ACKTR" in line:
-            line = line.replace("ACKTR", algorithm)
-        f3.write(line)
-    f3.close()
-    f2.seek(0)
+        # f3 = open(directory + "/run_grid_ex_" + algorithm + ".sh", 'w')
+        # for line in f2:
+        #     if "ACKTR" in line:
+        #         line = line.replace("ACKTR", algorithm)
+        #     f3.write(line)
+        # f3.close()
+        # f2.seek(0)
+
+
+if __name__ == '__main__':
+    for algorithm in algorithms:
+        for scale_reward in scale_rewards:
+            if algorithm == "RAC":
+                for renyiQ in renyiQs:
+                    generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ=renyiQ)
+            elif algorithm == "TAC":
+                for tsallisQ in tsallisQs:
+                    generate_script(algorithm, scale_reward, tasllisQ=tsallisQ, renyiQ=2.0)
+            else:
+                generate_script(algorithm, scale_reward)
 
 # Generate for gym control problems
-for algorithm in algorithms:
-    for problem in gym_problems:
-        directory = "../../grid_scripts/" + str(algorithm)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        f1 = open(directory + "/" + algorithm + "_" +
-                  problem + ".sh", 'w')
-        for line in f:
-            if 'pyName="run_pybullet.py"' in line:
-                if algorithm == "DDPG":
-                    line = line.replace("run_pybullet.py", "main.py")
-                else:
-                    line = 'pyName="run_simple_ctrl.py"'
-            if "$experimentFolder/$experimentName/ppo1/" in line:
-                line = "cd $experimentFolder/$experimentName/" + algorithm.lower() + "/\n"
-            if "BipedalWalker-v2" in line:
-                if algorithm == "DDPG":
-                    line = "python $pyName --env-id " + problem + "-v2" + " --seed $SGE_TASK_ID\n"
-                else:
-                    line = "python $pyName --env " + problem + "-v2" + " --seed $SGE_TASK_ID\n"
-            f1.write(line)
-        f1.close()
-        f.seek(0)
-
-    f3 = open(directory + "/run_grid_ex_" + algorithm + ".sh", 'w')
-    for line in f2:
-        if "ACKTR" in line:
-            line = line.replace("ACKTR", algorithm)
-        f3.write(line)
-    f3.close()
-    f2.seek(0)
-f.close()
+# for algorithm in algorithms:
+#     for problem in gym_problems:
+#         directory = "../../grid_scripts/" + str(algorithm)
+#         if not os.path.exists(directory):
+#             os.makedirs(directory)
+#         f1 = open(directory + "/" + algorithm + "_" +
+#                   problem + ".sh", 'w')
+#         for line in f:
+#             if 'pyName="run_pybullet.py"' in line:
+#                 if algorithm == "DDPG":
+#                     line = line.replace("run_pybullet.py", "main.py")
+#                 else:
+#                     line = 'pyName="run_simple_ctrl.py"'
+#             if "$experimentFolder/$experimentName/ppo1/" in line:
+#                 line = "cd $experimentFolder/$experimentName/" + algorithm.lower() + "/\n"
+#             if "BipedalWalker-v2" in line:
+#                 if algorithm == "DDPG":
+#                     line = "python $pyName --env-id " + problem + "-v2" + " --seed $SGE_TASK_ID\n"
+#                 else:
+#                     line = "python $pyName --env " + problem + "-v2" + " --seed $SGE_TASK_ID\n"
+#             f1.write(line)
+#         f1.close()
+#         f.seek(0)
+#
+#     f3 = open(directory + "/run_grid_ex_" + algorithm + ".sh", 'w')
+#     for line in f2:
+#         if "ACKTR" in line:
+#             line = line.replace("ACKTR", algorithm)
+#         f3.write(line)
+#     f3.close()
+#     f2.seek(0)
+# f.close()
