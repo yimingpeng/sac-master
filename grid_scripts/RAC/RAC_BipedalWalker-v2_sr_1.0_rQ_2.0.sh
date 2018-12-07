@@ -73,6 +73,7 @@ ls -la
 #
 echo ==SETUP BASH==
 bash
+export HOME=/vol/grid-solar/sgeusers/achen/home/
 export PATH=/vol/grid-solar/sgeusers/achen/miniconda3/bin/:$PATH
 source activate sac
 
