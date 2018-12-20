@@ -21,7 +21,7 @@ from utils import logger
 
 
 def run_experiment(env, seed, scale_reward,
-                   scale_entropy, tsallisQ):
+                   scale_entropy, tsallisQ, num_of_train):
     tf.set_random_seed(seed)
 
     environmentName = env
@@ -72,7 +72,7 @@ def run_experiment(env, seed, scale_reward,
 
     base_kwargs = {
         'epoch_length': 1000,
-        'n_train_repeat': 1,
+        'n_train_repeat': num_of_train,
         'n_initial_exploration_steps': 1000,
         'eval_render': False,
         'eval_n_episodes': 3,
@@ -125,21 +125,24 @@ def pybullet_arg_parser():
     parser.add_argument('--scale-reward', type = float, default = 3.0)
     parser.add_argument('--scale-entropy', type = float, default = 0.8)
     parser.add_argument('--tsallisQ', type = float, default = 2.0)
+    parser.add_argument('--num-of-train', type = int, default = 1)
     return parser
 
 
 def main():
     args = pybullet_arg_parser().parse_args()
     logger.configure(
-        format_strs = ['stdout', 'log', 'csv'], log_suffix = "TAC-{}-Seed_{}-sr_{}-se_{}-tQ_{}-START-".format(args.env,args.seed,args.scale_reward,args.scale_entropy,args.tsallisQ ))
+        format_strs = ['stdout', 'log', 'csv'], log_suffix = "TAC-{}-Seed_{}-sr_{}-se_{}-tQ_{}_nbt_{}-START-"
+            .format(args.env,args.seed,args.scale_reward,args.scale_entropy,args.tsallisQ,args.num_of_train))
     logger.log("Algorithm: TAC")
     logger.log("Environment: {}".format(args.env))
     logger.log("Seed: {}".format(args.seed))
     logger.log("scale-reward: {}".format(args.scale_reward))
     logger.log("scale_entropy: {}".format(args.scale_entropy))
     logger.log("tsallisQ: {}".format(args.tsallisQ))
+    logger.log("numberOfTrain: {}".format(args.num_of_train))
     run_experiment(env = args.env, seed = args.seed, scale_reward = args.scale_reward,
-                   scale_entropy = args.scale_entropy, tsallisQ = args.tsallisQ)
+                   scale_entropy = args.scale_entropy, tsallisQ = args.tsallisQ, num_of_train=int(args.num_of_train))
 
 
 if __name__ == '__main__':

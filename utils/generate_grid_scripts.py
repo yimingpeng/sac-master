@@ -30,6 +30,7 @@ problems = ["HalfCheetahBulletEnv-v0", "HopperBulletEnv-v0", "Walker2DBulletEnv-
 scale_rewards = [0.5, 1.0, 3.0]
 tsallisQs = [1.2, 1.5, 1.8, 2.0]
 renyiQs = [1.2, 1.5, 1.8, 2.0]
+num_of_trains = [4.0] # for Ant & HalfCheetah
 
 seeds = range(5)
 script_names = []

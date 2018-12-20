@@ -22,7 +22,7 @@ from utils import logger
 
 
 def run_experiment(env, seed, scale_reward,
-                   scale_entropy):
+                   scale_entropy, num_of_train):
     tf.set_random_seed(seed)
 
     # environmentName = "InvertedPendulumBulletEnv-v0"
@@ -73,7 +73,7 @@ def run_experiment(env, seed, scale_reward,
 
     base_kwargs = {
         'epoch_length': 1000,
-        'n_train_repeat': 1,
+        'n_train_repeat': num_of_train,
         'n_initial_exploration_steps': 1000,
         'eval_render': False,
         'eval_n_episodes': 1,
@@ -124,20 +124,23 @@ def pybullet_arg_parser():
     parser.add_argument('--seed', help = 'RNG seed', type = int, default = 0)
     parser.add_argument('--scale-reward', type = float, default = 0.5)
     parser.add_argument('--scale-entropy', type = float, default = 1.0)
+    parser.add_argument('--num-of-train', type = int, default = 1)
     return parser
 
 
 def main():
     args = pybullet_arg_parser().parse_args()
     logger.configure(
-        format_strs = ['stdout', 'log', 'csv'], log_suffix = "SAC-{}-Seed_{}-sr_{}-se_{}-START-".format(args.env,args.seed,args.scale_reward,args.scale_entropy))
+        format_strs = ['stdout', 'log', 'csv'], log_suffix = "SAC-{}-Seed_{}-sr_{}-se_{}-nbt_{}-START-"
+            .format(args.env,args.seed,args.scale_reward,args.scale_entropy,args.num_of_train))
     logger.log("Algorithm: SAC")
     logger.log("Environment: {}".format(args.env))
     logger.log("Seed: {}".format(args.seed))
     logger.log("scale-reward: {}".format(args.scale_reward))
     logger.log("scale_entropy: {}".format(args.scale_entropy))
+    logger.log("numberOfTrain: {}".format(args.num_of_train))
     run_experiment(env = args.env, seed = args.seed, scale_reward = args.scale_reward,
-                   scale_entropy = args.scale_entropy)
+                   scale_entropy = args.scale_entropy, num_of_train = args.num_of_train)
 
 
 if __name__ == '__main__':
