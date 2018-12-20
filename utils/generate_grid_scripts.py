@@ -27,10 +27,10 @@ algorithms = ["SAC", "EAC", "RAC", "TAC"]
 problems = ["HalfCheetahBulletEnv-v0", "HopperBulletEnv-v0", "Walker2DBulletEnv-v0", "ReacherBulletEnv-v0",
             "AntBulletEnv-v0", "HumanoidBulletEnv-v0",
             "LunarLanderContinuous-v2"]
-scale_rewards = [3.0]
+scale_rewards = [0.5, 1.0, 3.0]
 tsallisQs = [1.5, 2.0, 2.5]
 renyiQs = [1.5, 2.0, 2.5]
-num_of_train = 1  # for Ant & HalfCheetah
+num_of_trains = [1, 4]  # for Ant & HalfCheetah
 
 seeds = range(5)
 script_names = []
@@ -38,7 +38,7 @@ script_names = []
 
 # Generate for Bullet problems
 
-def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0):
+def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_of_train=1):
     directory = "../grid_scripts/" + str(algorithm)
     for problem in problems:
         if not os.path.exists(directory):
@@ -83,12 +83,15 @@ if __name__ == '__main__':
         for scale_reward in scale_rewards:
             if algorithm == "RAC":
                 for renyiQ in renyiQs:
-                    generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = renyiQ)
+                    for num_of_train in num_of_trains:
+                        generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = renyiQ, num_of_train = num_of_train)
             elif algorithm == "TAC":
                 for tsallisQ in tsallisQs:
-                    generate_script(algorithm, scale_reward, tasllisQ = tsallisQ, renyiQ = 2.0)
+                    for num_of_train in num_of_trains:
+                        generate_script(algorithm, scale_reward, tasllisQ = tsallisQ, renyiQ = 2.0, num_of_train = num_of_train)
             else:
-                generate_script(algorithm, scale_reward)
+                for num_of_train in num_of_trains:
+                    generate_script(algorithm, scale_reward, num_of_train)
 
         f3 = open("../grid_scripts/" + str(algorithm) + "/run_grid_ex_" + algorithm + ".sh", 'w')
         for line_f2 in f2:
