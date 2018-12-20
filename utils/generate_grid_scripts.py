@@ -14,8 +14,8 @@ __status__ = "Prototype"
 # Scripts for generating GCP startup scripts
 import os
 
-# person = 'yimingpeng'
-person = 'achen'
+person = 'yimingpeng'
+# person = 'achen'
 
 if person == 'achen':
     f = open("../grid_scripts/aaron_template.sh")
