@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # the repository
-cd /vol/grid-solar/sgeusers/yimingpeng/sac-master/grid_scripts/RAC/
+cd /vol/grid-solar/sgeusers/achen/sac-master/grid_scripts/RAC/
 
 # setting the grid env
 need sgegrid

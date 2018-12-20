@@ -1,112 +1,114 @@
 #!/bin/sh
 #
-# force bourne shell if not sun grid engine default shell (you never know!)
+# Force Bourne Shell if not Sun Grid Engine default shell (you never know!)
 #
-#$ -s /bin/sh
+#$ -S /bin/sh
 #
-# i know i have a directory here so i'll use it as my initial working directory
+# I know I have a directory here so I'll use it as my initial working directory
 #
-#$ -wd /vol/grid-solar/sgeusers/yimingpeng
+#$ -wd /vol/grid-solar/sgeusers/achen
 #
 
 #
-# end of the setup directives
+# End of the setup directives
 #
-# now let's do something useful, but first change into the job-specific
+# Now let's do something useful, but first change into the job-specific
 # directory that should have been created for us
 #
-# check we have somewhere to work now and if we don't, exit nicely.
+# Check we have somewhere to work now and if we don't, exit nicely.
 #
-if [ -d /local/tmp/yimingpeng/$job_id.$sge_task_id ]; then
-        cd /local/tmp/yimingpeng/$job_id.$sge_task_id
+if [ -d /local/tmp/achen/$JOB_ID.$SGE_TASK_ID ]; then
+        cd /local/tmp/achen/$JOB_ID.$SGE_TASK_ID
 else
-        echo "uh oh ! there's no job directory to change into "
-        echo "something is broken. i should inform the programmers"
-        echo "save some information that may be of use to them"
-        echo "here's local tmp "
+        echo "Uh oh ! There's no job directory to change into "
+        echo "Something is broken. I should inform the programmers"
+        echo "Save some information that may be of use to them"
+        echo "Here's LOCAL TMP "
         ls -la /local/tmp
-        echo "and local tmp yimingpeng "
-        ls -la /local/tmp/yimingpeng
-        echo "exiting"
+        echo "AND LOCAL TMP achen "
+        ls -la /local/tmp/achen
+        echo "Exiting"
         exit 1
 fi
 #
-# now we are in the job-specific directory so now can do something useful
+# Now we are in the job-specific directory so now can do something useful
 #
-# stdout from programs and shell echos will go into the file
-#    scriptname.o$job_id
+# Stdout from programs and shell echos will go into the file
+#    scriptname.o$JOB_ID
 #  so we'll put a few things in there to help us see what went on
 #
 #
-# do specific stuff here. here i need to first use bash, then conda env list, source activate openai-neat.
+# Do specific stuff here. Here i need to first use bash, then conda env list, source activate openai-neat.
 #
-echo ==uname==
+echo ==UNAME==
 uname -n
-echo ==who am i and groups==
+echo ==WHO AM I and GROUPS==
 id
 groups
-echo ==sge_o_workdir==
-echo $sge_o_workdir
-echo ==/local/tmp==
+echo ==SGE_O_WORKDIR==
+echo $SGE_O_WORKDIR
+echo ==/LOCAL/TMP==
 ls -ltr /local/tmp/
-echo ==/vol/grid-solar==
+echo ==/VOL/GRID-SOLAR==
 ls -l /vol/grid-solar/sgeusers/
 #
-# ok, where are we starting from and what's the environment we're in
+# OK, where are we starting from and what's the environment we're in
 #
-echo ==run home==
+echo ==RUN HOME==
 pwd
 ls
-echo ==env==
+echo ==ENV==
 env
-echo ==set==
+echo ==SET==
 set
 #
-echo == whats in local/tmp on the machine we are running on ==
+echo == WHATS IN LOCAL/TMP ON THE MACHINE WE ARE RUNNING ON ==
 ls -ltra /local/tmp | tail
 #
-echo == whats in local tmp yimingpeng job_id at the start==
+echo == WHATS IN LOCAL TMP achen JOB_ID AT THE START==
 ls -la
 
 #c
-# run python environment in bash
+# Run python environment in bash
 #
-echo ==setup bash==
+echo ==SETUP BASH==
 bash
-export path=/vol/grid-solar/sgeusers/yimingpeng/miniconda3/bin/:$path
+export HOME=/vol/grid-solar/sgeusers/achen/home/
+export PATH=/vol/grid-solar/sgeusers/achen/miniconda3/bin/:$PATH
 source activate sac
 
-#define path
-experimentfolder="sac-master"
-experimentname="examples"
-pyname="pybullet_test_tac.py"
+#Define path
+experimentFolder="sac-master"
+experimentName="examples"
+pyName="pybullet_test_tac.py"
 
 #
-# copy the input file to the local directory
+# Copy the input file to the local directory
 #
-cp -r /vol/grid-solar/sgeusers/yimingpeng/$experimentfolder .
+cp -r /vol/grid-solar/sgeusers/achen/$experimentFolder .
 
 #
 # cd into repo
 #
-echo ==going into experiment directory==
-cd $experimentfolder/$experimentname/
+echo ==GOING INTO EXPERIMENT DIRECTORY==
+cd $experimentFolder/$experimentName/
+
 #
-# run experiment
+# Run experiment
 #
-echo ==running experiment==
-python $pyname --env antbulletenv-v0 --seed $sge_task_id --scale-reward 0.5 --tsallisq 1.5 --num-of-train 1
+echo ==RUNNING EXPERIMENT==
+python $pyName --env AntBulletEnv-v0 --seed $SGE_TASK_ID --scale-reward 0.5 --tsallisQ 1.5 --num-of-train 1
 #
-echo ==and now, having done somthing useful and created some output==
+echo ==AND NOW, HAVING DONE SOMTHING USEFUL AND CREATED SOME OUTPUT==
 ls -la
 
 #
-# now we move the output to a place to pick it up from later
+# Now we move the output to a place to pick it up from later
 #  (really should check that directory exists too, but this is just a test)
 #
-echo ==copy program run files==
-mkdir -p /vol/grid-solar/sgeusers/yimingpeng/$experimentfolder/$job_id.$sge_task_id
-cp -r ./logs /vol/grid-solar/sgeusers/yimingpeng/$experimentfolder/$job_id.$sge_task_id
+echo ==COPY PROGRAM RUN FILES==
+mkdir -p /vol/grid-solar/sgeusers/achen/$experimentFolder/$JOB_ID.$SGE_TASK_ID
+cp -r ./logs /vol/grid-solar/sgeusers/achen/$experimentFolder/$JOB_ID.$SGE_TASK_ID
 
 #
-echo "ran through ok"
+echo "Ran through OK"
