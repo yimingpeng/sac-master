@@ -25,12 +25,12 @@ else:
     f2 = open("../grid_scripts/run_grid_ex_template.sh")
 algorithms = ["SAC", "EAC", "RAC", "TAC"]
 problems = ["HalfCheetahBulletEnv-v0", "HopperBulletEnv-v0", "Walker2DBulletEnv-v0", "ReacherBulletEnv-v0",
-            "AntBulletEnv-v0", "HumanoidBulletEnv-v0", "ThrowerBulletEnv-v0", "PusherBulletEnv-v0",
-            "LunarLanderContinuous-v2", "BipedalWalker-v2"]
-scale_rewards = [0.5, 1.0, 3.0]
-tsallisQs = [1.2, 1.5, 1.8, 2.0]
-renyiQs = [1.2, 1.5, 1.8, 2.0]
-num_of_trains = [4.0] # for Ant & HalfCheetah
+            "AntBulletEnv-v0", "HumanoidBulletEnv-v0",
+            "LunarLanderContinuous-v2"]
+scale_rewards = [3.0]
+tsallisQs = [1.5, 2.0, 2.5]
+renyiQs = [1.5, 2.0, 2.5]
+num_of_train = 1  # for Ant & HalfCheetah
 
 seeds = range(5)
 script_names = []
@@ -46,14 +46,15 @@ def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0):
         script_name = ""
         if algorithm == "RAC":
             script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_rQ_" + str(
-                renyiQ) + ".sh"
+                renyiQ) + "_nbt_" + str(num_of_train) + ".sh"
             f1 = open(script_name, 'w')
         elif algorithm == "TAC":
             script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_tQ_" + str(
-                tasllisQ) + ".sh"
+                tasllisQ) + "_nbt_" + str(num_of_train) + ".sh"
             f1 = open(script_name, 'w')
         else:
-            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + ".sh"
+            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_nbt_" + str(
+                num_of_train) + ".sh"
             f1 = open(script_name, 'w')
         script_names.append(script_name)
         for line in f:
@@ -62,14 +63,16 @@ def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0):
             if "BipedalWalker-v2" in line:
                 if algorithm == "RAC":
                     line = "python $pyName --env {} " \
-                           "--seed $SGE_TASK_ID --scale-reward {} --renyiQ {}\n".format(problem, scale_reward, renyiQ)
+                           "--seed $SGE_TASK_ID --scale-reward {} --renyiQ {} --num-of-train {}\n" \
+                        .format(problem, scale_reward, renyiQ, num_of_train)
                 elif algorithm == "TAC":
                     line = "python $pyName --env {} " \
-                           "--seed $SGE_TASK_ID --scale-reward {} --tsallisQ {}\n".format(problem, scale_reward,
-                                                                                          tasllisQ)
+                           "--seed $SGE_TASK_ID --scale-reward {} --tsallisQ {} --num-of-train {}\n" \
+                        .format(problem, scale_reward, tasllisQ, num_of_train)
                 else:
                     line = "python $pyName --env {} " \
-                           "--seed $SGE_TASK_ID --scale-reward {}\n".format(problem, scale_reward)
+                           "--seed $SGE_TASK_ID --scale-reward {} --num-of-train {}\n".format(problem, scale_reward,
+                                                                                              num_of_train)
             f1.write(line)
         f1.close()
         f.seek(0)
@@ -93,11 +96,12 @@ if __name__ == '__main__':
                 line_f2 = line_f2.replace("ACKTR", algorithm)
             if "# scripts starts here" in line_f2:
                 import glob
+
                 all_files = glob.glob("../grid_scripts/" + str(algorithm) + "/*.sh")
                 line_f2 += "\n"
                 for file in all_files:
                     if "run_grid" not in file.split("/")[-1]:
-                        line_f2 += "qsub -t 1-3:1 {}\n".format(file.split("/")[-1])
+                        line_f2 += "qsub -t 1-10:1 {}\n".format(file.split("/")[-1])
             f3.write(line_f2)
         f3.close()
         f2.seek(0)
