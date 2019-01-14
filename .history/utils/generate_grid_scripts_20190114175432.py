@@ -43,7 +43,8 @@ tsallisQs = [1.5, 2.0, 2.5]
 renyiQs = [1.5, 2.0, 2.5]
 num_of_trains = [1, 4]  # for Ant & HalfCheetah
 
-seeds = range(5)
+import random
+seeds = range(5)+random.rantint(2**32)
 script_names = []
 
 
