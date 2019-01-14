@@ -69,7 +69,7 @@ def run_experiment(env, seed, scale_reward,
         policy_func_layers_number=N,
         policy_func_layer_size=M,
         base_ac_alg_params=base_kwargs,
-        q_param_list=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        q_param_list=[1.5, 1.5, 2.0, 2.0, 2.5, 2.5],
         use_ucb=False,
         evaluation_strategy='ensemble'
     )
