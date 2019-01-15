@@ -14,12 +14,11 @@ import tensorflow as tf
 
 from sac.algos.eac import EAC
 
-
 from utils import logger
 
 
 def run_experiment(env, seed, scale_reward,
-                   scale_entropy, num_of_train):
+                   scale_entropy, num_of_train, q_value):
     tf.set_random_seed(seed)
 
     # environmentName = env
@@ -69,7 +68,7 @@ def run_experiment(env, seed, scale_reward,
         policy_func_layers_number=N,
         policy_func_layer_size=M,
         base_ac_alg_params=base_kwargs,
-        q_param_list=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        q_param_list=[q_value, q_value, q_value, q_value, q_value, q_value],
         use_ucb=False,
         evaluation_strategy='ensemble'
     )
@@ -89,6 +88,7 @@ def pybullet_arg_parser():
     parser.add_argument('--seed', help = 'RNG seed', type = int, default = 0)
     parser.add_argument('--scale-reward', type = float, default = 0.5)
     parser.add_argument('--scale-entropy', type = float, default = 0.6)
+    parser.add_argument('--q-value', type = float, default = 2.0)
     parser.add_argument('--num-of-train', type = int, default = 1)
     return parser
 
@@ -97,15 +97,17 @@ def main():
     args = pybullet_arg_parser().parse_args()
     logger.configure(
         format_strs = ['stdout', 'log', 'csv'],
-        log_suffix = "EAC-{}-Seed_{}-sr_{}-se_{}-nbt_{}-START-"
-            .format(args.env,args.seed,args.scale_reward,args.scale_entropy, args.num_of_train))
+        log_suffix = "EAC-{}-Seed_{}-sr_{}-se_{}-nbt_{}-qv_{}-START-"
+            .format(args.env,args.seed,args.scale_reward,args.scale_entropy, args.num_of_train, args.q_value))
     logger.log("Algorithm: EAC")
     logger.log("Environment: {}".format(args.env))
     logger.log("Seed: {}".format(args.seed))
     logger.log("scale-reward: {}".format(args.scale_reward))
     logger.log("numberOfTrain: {}".format(args.num_of_train))
+    logger.log("q-value: {}".format(args.q_value))
     run_experiment(env = args.env, seed = args.seed, scale_reward = args.scale_reward,
-                   scale_entropy = args.scale_entropy, num_of_train = args.num_of_train)
+                   scale_entropy = args.scale_entropy, num_of_train = args.num_of_train,
+                q_value = args.q_value)
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 
 from rllab.core.serializable import Serializable
-from utils import logger
+from rllab.misc import logger
 from rllab.misc.overrides import overrides
 from sac.policies import GaussianPolicy
 
@@ -355,7 +355,8 @@ class RAC(RLAlgorithm, Serializable):
 
         # Numerically approximate the integration of each action dimension.
         integral_results = np.ones(len(mu_array))
-        percentiles = np.array([-1.28, -0.84, -0.52, -0.25, 0, 0.25, 0.52, 0.84, 1.28])
+        # percentiles = np.array([-1.28, -0.84, -0.52, -0.25, 0, 0.25, 0.52, 0.84, 1.28])
+        percentiles = np.array([-0.675, 0, 0.675])
         for i, mu in enumerate(mu_array):
             log_sigma = log_sigma_array[i]
 
@@ -367,15 +368,27 @@ class RAC(RLAlgorithm, Serializable):
                 total = 0.0
                 # samples = np.random.normal(m, sigma, 10)
                 samples = np.array(list(map(percent_lam, percentiles)))
-                for sample in samples:
-                    total = total + \
-                        math.pow(self._normal_probablity_density_function(sample, m, sigma), self._renyiQ - 1.) * \
-                        math.pow(self._tanh_derivative_inv(sample), self._renyiQ - 1.)
-                total = total / len(samples)
-                integral_results[i] = integral_results[i] * total
 
-            if integral_results[i] > 1.0 - EPS or math.isnan(integral_results[i]) or math.isinf(integral_results[i]):
+                if sigma < 0.01:
+                    integral_results[i] = integral_results[i] * 1.0
+                elif abs(m) > 10.0:
+                    integral_results[i] = integral_results[i] * 1.0
+                else:
+                    for sample in samples:
+                        total = total + \
+                            math.pow(self._normal_probablity_density_function(sample, m, sigma), self._renyiQ - 1.) * \
+                            math.pow(self._tanh_derivative_inv(sample), self._renyiQ - 1.)
+                    total = total / len(samples)
+                    integral_results[i] = integral_results[i] * total
+
+            if integral_results[i] > 2.0 - EPS:
+                integral_results[i] = 2.0 - EPS
+            elif math.isnan(integral_results[i]):
                 integral_results[i] = 1.0 - EPS
+            elif math.isinf(integral_results[i]):
+                integral_results[i] = 1.0 - EPS
+            elif integral_results[i] < 0.5:
+                integral_results[i] = 0.5
             integral_results[i] = math.log(integral_results[i])
 
         return integral_results
