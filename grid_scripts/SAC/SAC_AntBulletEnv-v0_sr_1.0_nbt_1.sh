@@ -97,7 +97,7 @@ cd $experimentFolder/$experimentName/
 # Run experiment
 #
 echo ==RUNNING EXPERIMENT==
-python $pyName --env AntBulletEnv-v0 --seed $SGE_TASK_ID --scale-reward 1.0 --num-of-train 1
+python $pyName --env AntBulletEnv-v0 --seed $SGE_TASK_ID --scale-reward 1.0 --num-of-train 1 -- q-value 2.0
 #
 echo ==AND NOW, HAVING DONE SOMTHING USEFUL AND CREATED SOME OUTPUT==
 ls -la

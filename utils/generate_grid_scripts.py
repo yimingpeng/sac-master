@@ -41,6 +41,7 @@ problems = ["HalfCheetahBulletEnv-v0", "HopperBulletEnv-v0", "Walker2DBulletEnv-
 scale_rewards = [0.5, 1.0, 3.0]
 tsallisQs = [1.5, 2.0, 2.5]
 renyiQs = [1.5, 2.0, 2.5]
+# q_values = [pat]
 num_of_trains = [1, 4]  # for Ant & HalfCheetah
 
 seeds = range(5)
@@ -49,7 +50,7 @@ script_names = []
 
 # Generate for Bullet problems
 
-def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_of_train=1):
+def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_of_train=1, q_value = 2.0):
     directory = "../grid_scripts/" + str(algorithm)
     for problem in problems:
         if not os.path.exists(directory):
@@ -63,9 +64,11 @@ def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_o
             script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_tQ_" + str(
                 tasllisQ) + "_nbt_" + str(num_of_train) + ".sh"
             f1 = open(script_name, 'w')
-        else:
+        elif algorithm == "SAC":
             script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_nbt_" + str(num_of_train) + ".sh"
-            print(script_name)
+            f1 = open(script_name, 'w')
+        else:
+            script_name = directory + "/" + algorithm + "_" + problem + "_sr_" + str(scale_reward) + "_nbt_" + str(num_of_train) + "_qvalue_" + str(q_value) + ".sh"
             f1 = open(script_name, 'w')
         script_names.append(script_name)
         for line in f:
@@ -80,9 +83,12 @@ def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_o
                     line = "python $pyName --env {} " \
                            "--seed $SGE_TASK_ID --scale-reward {} --tsallisQ {} --num-of-train {}\n" \
                         .format(problem, scale_reward, tasllisQ, num_of_train)
+                elif algorithm == "SAC":
+                    line = "python $pyName --env {} " \
+                           "--seed $SGE_TASK_ID --scale-reward {} --num-of-train {} -- q-value {}\n".format(problem, scale_reward,num_of_train, q_value)
                 else:
                     line = "python $pyName --env {} " \
-                           "--seed $SGE_TASK_ID --scale-reward {} --num-of-train {}\n".format(problem, scale_reward,num_of_train)
+                           "--seed $SGE_TASK_ID --scale-reward {} --num-of-train {} -- q-value {}\n".format(problem, scale_reward,num_of_train, q_value)
             f1.write(line)
         f1.close()
         f.seek(0)

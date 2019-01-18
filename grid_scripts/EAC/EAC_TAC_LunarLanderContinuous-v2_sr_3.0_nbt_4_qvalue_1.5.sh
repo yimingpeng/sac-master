@@ -97,7 +97,7 @@ cd $experimentFolder/$experimentName/
 # Run experiment
 #
 echo ==RUNNING EXPERIMENT==
-python $pyName --env LunarLanderContinuous-v2 --seed $SGE_TASK_ID --scale-reward 1.0 --num-of-train 1
+python $pyName --env LunarLanderContinuous-v2 --seed $SGE_TASK_ID --scale-reward 3.0 --num-of-train 4 --q-value 1.5
 #
 echo ==AND NOW, HAVING DONE SOMTHING USEFUL AND CREATED SOME OUTPUT==
 ls -la
