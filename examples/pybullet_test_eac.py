@@ -84,11 +84,11 @@ def pybullet_arg_parser():
     import argparse
     parser = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--env', help = 'environment ID', type = str,
-                        default = "ThrowerBulletEnv-v0")
+                        default = "LunarLanderContinuous-v2")
     parser.add_argument('--seed', help = 'RNG seed', type = int, default = 0)
-    parser.add_argument('--scale-reward', type = float, default = 0.5)
+    parser.add_argument('--scale-reward', type = float, default = 3.0)
     parser.add_argument('--scale-entropy', type = float, default = 0.6)
-    parser.add_argument('--q-value', type = float, default = 2.0)
+    parser.add_argument('--q-value', type = float, default = 1.5)
     parser.add_argument('--num-of-train', type = int, default = 1)
     return parser
 
