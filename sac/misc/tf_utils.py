@@ -19,6 +19,6 @@ def get_configuration():
         raise NotImplementedError
 
     # config_args = dict()
-    num_cpu = 1
+    num_cpu = 8
     return tf.ConfigProto(inter_op_parallelism_threads=num_cpu,
         intra_op_parallelism_threads=num_cpu)
