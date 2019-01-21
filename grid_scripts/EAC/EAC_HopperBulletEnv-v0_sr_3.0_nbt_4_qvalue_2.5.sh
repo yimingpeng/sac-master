@@ -73,7 +73,6 @@ ls -la
 #
 echo ==SETUP BASH==
 bash
-export HOME=/vol/grid-solar/sgeusers/yimingpeng/home/
 export PATH=/vol/grid-solar/sgeusers/yimingpeng/miniconda3/bin/:$PATH
 source activate sac
 
@@ -92,12 +91,11 @@ cp -r /vol/grid-solar/sgeusers/yimingpeng/$experimentFolder .
 #
 echo ==GOING INTO EXPERIMENT DIRECTORY==
 cd $experimentFolder/$experimentName/
-
 #
 # Run experiment
 #
 echo ==RUNNING EXPERIMENT==
-python $pyName --env LunarLanderContinuous-v2 --seed $SGE_TASK_ID --scale-reward 3.0 --num-of-train 1 --q-value 1.5
+python $pyName --env HopperBulletEnv-v0 --seed $SGE_TASK_ID --scale-reward 3.0 --num-of-train 4 -- q-value 2.5
 #
 echo ==AND NOW, HAVING DONE SOMTHING USEFUL AND CREATED SOME OUTPUT==
 ls -la

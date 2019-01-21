@@ -26,8 +26,8 @@ __status__ = "Prototype"
 # Scripts for generating GCP startup scripts
 import os
 
-# person = 'yimingpeng'
-person = 'achen'
+person = 'yimingpeng'
+# person = 'achen'
 
 if person == 'achen':
     f = open("../grid_scripts/aaron_template.sh")
@@ -36,12 +36,11 @@ else:
     f = open("../grid_scripts/template.sh")
     f2 = open("../grid_scripts/run_grid_ex_template.sh")
 algorithms = ["SAC", "EAC", "RAC", "TAC"]
-problems = ["HalfCheetahBulletEnv-v0", "HopperBulletEnv-v0", "Walker2DBulletEnv-v0", "ReacherBulletEnv-v0",
-            "AntBulletEnv-v0", "LunarLanderContinuous-v2"]
-scale_rewards = [0.5, 1.0, 3.0]
+problems = ["HopperBulletEnv-v0"]
+scale_rewards = [3.0]
 tsallisQs = [1.5, 2.0, 2.5]
 renyiQs = [1.5, 2.0, 2.5]
-# q_values = [pat]
+q_values = [1.5, 2.0, 2.5]
 num_of_trains = [1, 4]  # for Ant & HalfCheetah
 
 seeds = range(5)
@@ -85,7 +84,7 @@ def generate_script(algorithm, scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_o
                         .format(problem, scale_reward, tasllisQ, num_of_train)
                 elif algorithm == "SAC":
                     line = "python $pyName --env {} " \
-                           "--seed $SGE_TASK_ID --scale-reward {} --num-of-train {} -- q-value {}\n".format(problem, scale_reward,num_of_train, q_value)
+                           "--seed $SGE_TASK_ID --scale-reward {} --num-of-train {} \n".format(problem, scale_reward,num_of_train)
                 else:
                     line = "python $pyName --env {} " \
                            "--seed $SGE_TASK_ID --scale-reward {} --num-of-train {} -- q-value {}\n".format(problem, scale_reward,num_of_train, q_value)
@@ -105,9 +104,13 @@ if __name__ == '__main__':
                 for tsallisQ in tsallisQs:
                     for num_of_train in num_of_trains:
                         generate_script(algorithm, scale_reward=scale_reward, tasllisQ = tsallisQ, renyiQ = 2.0, num_of_train = num_of_train)
-            else:
+            elif algorithm == "SAC":
                 for num_of_train in num_of_trains:
                     generate_script(algorithm, scale_reward=scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_of_train = num_of_train)
+            else:
+                for num_of_train in num_of_trains:
+                    for q_value in q_values:
+                        generate_script(algorithm, scale_reward=scale_reward, tasllisQ = 2.0, renyiQ = 2.0, num_of_train = num_of_train, q_value=q_value)
 
         f3 = open("../grid_scripts/" + str(algorithm) + "/run_grid_ex_" + algorithm + ".sh", 'w')
         for line_f2 in f2:

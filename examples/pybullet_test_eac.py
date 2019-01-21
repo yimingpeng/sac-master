@@ -55,7 +55,7 @@ def run_experiment(env, seed, scale_reward,
 
     algorithm = EAC(
         environment_name=environmentName,
-        algorithm_name='rac',
+        algorithm_name='tac',
         lr=3.e-4,
         scale_reward=scale_reward,
         scale_entropy=scale_entropy,
@@ -84,8 +84,8 @@ def pybullet_arg_parser():
     import argparse
     parser = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--env', help = 'environment ID', type = str,
-                        default = "LunarLanderContinuous-v2")
-    parser.add_argument('--seed', help = 'RNG seed', type = int, default = 0)
+                        default = "AntBulletEnv-v0")
+    parser.add_argument('--seed', help = 'RNG seed', type = int, default = 100)
     parser.add_argument('--scale-reward', type = float, default = 3.0)
     parser.add_argument('--scale-entropy', type = float, default = 0.6)
     parser.add_argument('--q-value', type = float, default = 1.5)
@@ -97,9 +97,9 @@ def main():
     args = pybullet_arg_parser().parse_args()
     logger.configure(
         format_strs = ['stdout', 'log', 'csv'],
-        log_suffix = "EAC-{}-Seed_{}-sr_{}-se_{}-nbt_{}-qv_{}-START-"
+        log_suffix = "EAC-TAC-{}-Seed_{}-sr_{}-se_{}-nbt_{}-qv_{}-START-"
             .format(args.env,args.seed,args.scale_reward,args.scale_entropy, args.num_of_train, args.q_value))
-    logger.log("Algorithm: EAC")
+    logger.log("Algorithm: EAC-TAC")
     logger.log("Environment: {}".format(args.env))
     logger.log("Seed: {}".format(args.seed))
     logger.log("scale-reward: {}".format(args.scale_reward))
